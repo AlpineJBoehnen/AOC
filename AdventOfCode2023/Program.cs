@@ -7,20 +7,38 @@ internal class Program
         string[] input = ReadInput();
         Stopwatch sw = Stopwatch.StartNew();
 
-        Day1_Part1(input);
+        string output = Day1_Part1(input);
+
+        sw.Stop();
+        Console.WriteLine($"Time taken: {sw.ElapsedMilliseconds}ms");
+        WriteStringToFileOnDesktop("output.txt", output);
     }
 
-    private static void Day1_Part1(string[] input)
+    private static string Day1_Part1(string[] input)
     {
         var isDigit = (char c) =>
         {
-            return int.TryParse
+            return int.TryParse(c.ToString(), out _);
         };
+
         int total = 0;
         foreach(string line in input)
         {
-            
+            char? firstChar = line.FirstOrDefault(_ => isDigit(_));
+            char? lastChar = line.FirstOrDefault(_ => isDigit(_));
+
+            if(!firstChar.HasValue || !lastChar.HasValue)
+            {
+                continue;
+            }
+
+            int first = int.Parse(firstChar.Value.ToString());
+            int last = int.Parse(lastChar.Value.ToString());
+
+            total += first + last;
         }
+
+        return total.ToString();
     }
 
     private static string[] ReadInput()
