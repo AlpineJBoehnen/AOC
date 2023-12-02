@@ -24,18 +24,15 @@ internal class Program
         int total = 0;
         foreach(string line in input)
         {
-            char? firstChar = line.FirstOrDefault(_ => isDigit(_));
-            char? lastChar = line.FirstOrDefault(_ => isDigit(_));
+            char? first = line.FirstOrDefault(_ => isDigit(_));
+            char? last = line.LastOrDefault(_ => isDigit(_));
 
-            if(!firstChar.HasValue || !lastChar.HasValue)
+            if(!first.HasValue || !last.HasValue)
             {
                 continue;
             }
 
-            int first = int.Parse(firstChar.Value.ToString());
-            int last = int.Parse(lastChar.Value.ToString());
-
-            total += first + last;
+            total += int.Parse($"{first}{last}");
         }
 
         return total.ToString();
