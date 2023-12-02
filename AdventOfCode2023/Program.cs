@@ -4,10 +4,10 @@ internal class Program
 {
     private static void Main(string[] args)
     {
-        string[] input = ReadInput(@"C:\Users\Justin Boehnen\Desktop\input.txt");
+        string[] input = ReadInput(@"C:\Users\unive\Desktop\input.txt");
         Stopwatch sw = Stopwatch.StartNew();
 
-        string output = Day1_Part2(input);
+        string output = Day2_Part2(input);
 
         sw.Stop();
         Console.WriteLine($"Time taken: {sw.ElapsedMilliseconds}ms");
@@ -102,6 +102,67 @@ internal class Program
 
         return total.ToString();
     }
+
+    private static string Day2_Part1(string[] input)
+    {
+        int[] limits = [12, 13, 14]; //R G B
+        int total = 0;
+
+        foreach(string line in input)
+        {
+            int[] colorCounts = new int[3]; //R G B
+            var parts = line.Split(',', ':', ';');
+            int roundId = int.Parse(parts[0].Replace("Game ", ""));
+
+            foreach(string part in parts.Skip(1))
+            {
+                int count = int.Parse(part.Split(' ', StringSplitOptions.RemoveEmptyEntries)[0]);
+                string colorName = part.Split(' ', StringSplitOptions.RemoveEmptyEntries)[1];
+                int colorIndex = colorName == "red" ? 0 : colorName == "green" ? 1 : 2;
+
+                if (count > colorCounts[colorIndex])
+                {
+                    colorCounts[colorIndex] = count;
+                }
+            }
+
+            if (colorCounts[0] <= limits[0] && colorCounts[1] <= limits[1] && colorCounts[2] <= limits[2])
+            {
+                total += roundId;
+            }
+        }
+
+        return total.ToString();
+    }
+
+    private static string Day2_Part2(string[] input)
+    {
+        int total = 0;
+
+        foreach (string line in input)
+        {
+            int[] colorCounts = new int[3]; //R G B
+            var parts = line.Split(',', ':', ';');
+            int roundId = int.Parse(parts[0].Replace("Game ", ""));
+
+            foreach (string part in parts.Skip(1))
+            {
+                int count = int.Parse(part.Split(' ', StringSplitOptions.RemoveEmptyEntries)[0]);
+                string colorName = part.Split(' ', StringSplitOptions.RemoveEmptyEntries)[1];
+                int colorIndex = colorName == "red" ? 0 : colorName == "green" ? 1 : 2;
+
+                if (count > colorCounts[colorIndex])
+                {
+                    colorCounts[colorIndex] = count;
+                }
+            }
+
+            total += (colorCounts[0] * colorCounts[1] * colorCounts[2]);
+        }
+
+        return total.ToString();
+    }
+
     private static string[] ReadInput()
     {
         string? filePath;
