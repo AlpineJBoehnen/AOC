@@ -8,7 +8,7 @@ internal class Program
         string[] input = ReadInput(@"C:\Users\Justin Boehnen\Desktop\input.txt");
         Stopwatch sw = Stopwatch.StartNew();
 
-        string output = Day4.Part2(input);
+        string output = Day5.Part1(input);
 
         sw.Stop();
         Console.WriteLine($"Time taken: {sw.ElapsedMilliseconds}ms");
