@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using AdventOfCode2023;
+using System.Diagnostics;
 
 internal class Program
 {
@@ -7,7 +8,7 @@ internal class Program
         string[] input = ReadInput(@"C:\Users\unive\Desktop\input.txt");
         Stopwatch sw = Stopwatch.StartNew();
 
-        string output = Day2_Part2(input);
+        string output = Day3.Part2(input);
 
         sw.Stop();
         Console.WriteLine($"Time taken: {sw.ElapsedMilliseconds}ms");
