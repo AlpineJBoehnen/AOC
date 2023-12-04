@@ -1,14 +1,17 @@
-﻿using System;
+﻿using AdventOfCode;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AdventOfCode2023
+namespace AdventOfCode_2023
 {
-    internal class Day3 : ISolution
+    public class Day3 : AdventOfCodeDay
     {
-        public static string Part1(string[] input)
+        public Day3() : base(2023, 3) { }
+
+        protected override string SolvePart1(string[] input)
         {
             static bool isSymbol(char c)
             {
@@ -88,7 +91,7 @@ namespace AdventOfCode2023
             return total.ToString();
         }
 
-        public static string Part2(string[] input)
+        protected override string SolvePart2(string[] input)
         {
             int total = 0;
             int height = input.Length;

@@ -1,19 +1,22 @@
-﻿using System;
+﻿using AdventOfCode;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AdventOfCode2023
+namespace AdventOfCode_2023
 {
-    internal class Day1 : ISolution
+    public class Day1 : AdventOfCodeDay
     {
-        public static string Part1(string[] input)
+        public Day1() : base(2023, 1) { }
+
+        protected override string SolvePart1(string[] input)
         {
-            var isDigit = (char c) =>
+            static bool isDigit(char c)
             {
                 return int.TryParse(c.ToString(), out _);
-            };
+            }
 
             int total = 0;
             foreach (string line in input)
@@ -32,29 +35,29 @@ namespace AdventOfCode2023
             return total.ToString();
         }
 
-        public static string Part2(string[] input)
+        protected override string SolvePart2(string[] input)
         {
             Dictionary<string, string> numbers = new()
-        {
-            {"1", "1"},
-            {"one", "1"},
-            {"2", "2"},
-            {"two", "2"},
-            {"3", "3"},
-            {"three", "3"},
-            {"4", "4"},
-            {"four", "4"},
-            {"5", "5"},
-            {"five", "5"},
-            {"6", "6"},
-            {"six", "6"},
-            {"7", "7"},
-            {"seven", "7"},
-            {"8", "8"},
-            {"eight", "8"},
-            {"9", "9"},
-            {"nine", "9"}
-        };
+            {
+                {"1", "1"},
+                {"one", "1"},
+                {"2", "2"},
+                {"two", "2"},
+                {"3", "3"},
+                {"three", "3"},
+                {"4", "4"},
+                {"four", "4"},
+                {"5", "5"},
+                {"five", "5"},
+                {"6", "6"},
+                {"six", "6"},
+                {"7", "7"},
+                {"seven", "7"},
+                {"8", "8"},
+                {"eight", "8"},
+                {"9", "9"},
+                {"nine", "9"}
+            };
 
             int total = 0;
 
