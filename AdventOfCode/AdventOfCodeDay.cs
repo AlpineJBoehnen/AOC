@@ -13,6 +13,7 @@ public abstract class AdventOfCodeDay
     protected AdventOfCodeDay(int year, int day)
     {
         _day = day;
+        _year = year;
 
         string dayFolder = $"Day {day}";
         _fullInputPath = Path.Combine(dayFolder, "input.txt");
