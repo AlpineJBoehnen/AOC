@@ -1,15 +1,15 @@
 ﻿using System.Security.Cryptography;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace AdventOfCode.Y2015;
 
-public class Day5 : AdventOfCodeDay
+public partial class Day5 : AdventOfCodeDay
 {
     public Day5() : base(2015, 5) { }
 
     protected override string SolvePart1(string[] input)
     {
-        // trimmed blank line at end of input
         int total = 0;
 
         foreach (string line in input)
@@ -69,24 +69,11 @@ public class Day5 : AdventOfCodeDay
 
     protected override string SolvePart2(string[] input)
     {
-        // trimmed blank line at end of input
         int total = 0;
 
         foreach (string line in input)
         {
-            int upTo = 0;
-            if (line.Length % 2 == 1) //odd
-            {
-                upTo = line.Length - 1;
-            }
-            else
-            {
-                upTo = line.Length;
-            }
-
-            HashSet<string> seenPairs = new();
             bool letterBetweenPairs = false;
-            bool pair = false;
 
             for (int ii = 1; ii < line.Length - 1; ii ++)
             {
@@ -96,57 +83,7 @@ public class Day5 : AdventOfCodeDay
                 }
             }
 
-            char prevChar = ' ';
-            for (int ii = 0; ii < upTo; ii += 2)
-            {
-                char nextChar = line[ii + 1];
-
-                if (prevChar == line[ii] && line[ii] == nextChar)
-                {
-                    if (seenPairs.Contains($"{prevChar}{line[ii]}"))
-                    {
-                        pair = true;
-                    }
-                    else
-                    {
-                        seenPairs.Add($"{prevChar}{line[ii]}");
-                    }
-                }
-                else
-                {
-                    if (seenPairs.Contains($"{prevChar}{line[ii]}"))
-                    {
-                        pair = true;
-                    }
-                    else
-                    {
-                        seenPairs.Add($"{prevChar}{line[ii]}");
-                    }
-
-                    if (seenPairs.Contains($"{line[ii]}{nextChar}"))
-                    {
-                        pair = true;
-                    }
-                    else
-                    {
-                        seenPairs.Add($"{line[ii]}{nextChar}");
-                    }
-                }
-
-                prevChar = nextChar;
-            }
-
-            //last char if odd length
-            if (line.Length % 2 == 1)
-            {
-                if (line[^1] == line[^0])
-                {
-                    if (seenPairs.Contains($"{line[^2]}{line[^1]}"))
-                    {
-                        pair = true;
-                    }
-                }
-            }
+            bool pair = NonOverlappingPairRegex().IsMatch(line);
 
             if (pair && letterBetweenPairs)
             {
@@ -156,4 +93,7 @@ public class Day5 : AdventOfCodeDay
 
         return total.ToString();
     }
+
+    [GeneratedRegex(@"(?=(\w\w)\w*\1)")]
+    private static partial Regex NonOverlappingPairRegex();
 }
