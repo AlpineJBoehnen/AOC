@@ -1,5 +1,4 @@
 ﻿using System.Diagnostics;
-using System.Reflection;
 
 namespace AdventOfCode;
 
@@ -49,10 +48,10 @@ public abstract class AdventOfCodeDay
     protected abstract string SolvePart1(string[] input);
     protected abstract string SolvePart2(string[] input);
 
-    private static string[] ReadInput(string filePath)
+    private string[] ReadInput(string filePath)
     {
         // Construct the full path to the file relative to the assembly location
-        string fullPath = Path.Combine(Environment.CurrentDirectory, $"..\\..\\..\\2023", filePath);
+        string fullPath = Path.Combine(Environment.CurrentDirectory, $"..\\..\\..\\{_year}", filePath);
 
         return File.ReadAllLines(fullPath);
     }

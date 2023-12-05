@@ -1,11 +1,4 @@
-﻿using AdventOfCode;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace AdventOfCode_2023;
+﻿namespace AdventOfCode.Y2023;
 
 public class Day4 : AdventOfCodeDay
 {

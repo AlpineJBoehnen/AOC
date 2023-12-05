@@ -1,11 +1,14 @@
 ﻿using AdventOfCode;
-using AdventOfCode_2023;
-using System.Diagnostics;
+
+// Select Year
+using AdventOfCode.Y2015;
+//using AdventOfCode.Y2023;
 
 internal class Program
 {
     private static void Main(string[] args)
     {
+        // Select Day
         AdventOfCodeDay day = new Day5();
 
         day.Run(false);
