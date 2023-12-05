@@ -8,6 +8,6 @@ internal class Program
     {
         AdventOfCodeDay day = new Day5();
 
-        day.Run();
+        day.Run(false);
     }
 }
