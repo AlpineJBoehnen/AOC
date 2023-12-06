@@ -21,8 +21,6 @@ public abstract class AdventOfCodeDay
 
     public void Run(bool useExampleInput = false)
     {
-        string[] input = useExampleInput ? ReadInput(_exampleInputPath) : ReadInput(_fullInputPath);
-
         if (useExampleInput)
         {
             Console.WriteLine($"Advent of Code {_year} (Day {_day}) (Example Input)\n");
@@ -34,13 +32,13 @@ public abstract class AdventOfCodeDay
 
         // Part 1
         Stopwatch sw = Stopwatch.StartNew();
-        string resultPart1 = SolvePart1(input);
+        string resultPart1 = SolvePart1(ReadPart1Input(useExampleInput));
         sw.Stop();
         Console.WriteLine($"Part 1: {resultPart1} ({sw.ElapsedMilliseconds} ms)");
 
         // Part 2
         sw.Restart();
-        string resultPart2 = SolvePart2(input);
+        string resultPart2 = SolvePart2(ReadPart2Input(useExampleInput));
         sw.Stop();
         Console.WriteLine($"Part 2: {resultPart2} ({sw.ElapsedMilliseconds} ms)");
     }
@@ -48,11 +46,29 @@ public abstract class AdventOfCodeDay
     protected abstract string SolvePart1(string[] input);
     protected abstract string SolvePart2(string[] input);
 
-    private string[] ReadInput(string filePath)
+    private string[] ReadPart1Input(bool useExampleInput)
     {
-        // Construct the full path to the file relative to the assembly location
-        string fullPath = Path.Combine(Environment.CurrentDirectory, $"..\\..\\..\\{_year}", filePath);
+        string root = Path.Combine(Environment.CurrentDirectory, $"..\\..\\..\\{_year}", $"Day {_day}");
+        try
+        {
+            return File.ReadAllLines(Path.Combine(root, "input.txt"));
+        }
+        catch
+        {
+            return File.ReadAllLines(Path.Combine(root, "part1.txt"));
+        }
+    }
 
-        return File.ReadAllLines(fullPath);
+    private string[] ReadPart2Input(bool useExampleInput)
+    {
+        string root = Path.Combine(Environment.CurrentDirectory, $"..\\..\\..\\{_year}", $"Day {_day}");
+        try
+        {
+            return File.ReadAllLines(Path.Combine(root, "input.txt"));
+        }
+        catch
+        {
+            return File.ReadAllLines(Path.Combine(root, "part2.txt"));
+        }
     }
 }
