@@ -123,7 +123,7 @@ public partial class Day6 : AdventOfCodeDay
         {
             for (int yy = a.Item2; yy <= b.Item2; yy++)
             {
-                matrix[xx, yy] -= amount;
+                matrix[xx, yy] -= Math.Min(amount, matrix[xx, yy]);
             }
         }
     }
