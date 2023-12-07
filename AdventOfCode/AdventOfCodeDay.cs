@@ -49,6 +49,10 @@ public abstract class AdventOfCodeDay
     private string[] ReadPart1Input(bool useExampleInput)
     {
         string root = Path.Combine(Environment.CurrentDirectory, $"..\\..\\..\\{_year}", $"Day {_day}");
+        if (useExampleInput)
+        {
+            return File.ReadAllLines(Path.Combine(root, "example.txt"));
+        }
         try
         {
             return File.ReadAllLines(Path.Combine(root, "input.txt"));
@@ -62,6 +66,10 @@ public abstract class AdventOfCodeDay
     private string[] ReadPart2Input(bool useExampleInput)
     {
         string root = Path.Combine(Environment.CurrentDirectory, $"..\\..\\..\\{_year}", $"Day {_day}");
+        if (useExampleInput)
+        {
+            return File.ReadAllLines(Path.Combine(root, "example.txt"));
+        }
         try
         {
             return File.ReadAllLines(Path.Combine(root, "input.txt"));
