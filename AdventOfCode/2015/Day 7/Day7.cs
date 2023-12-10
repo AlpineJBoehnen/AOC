@@ -20,37 +20,30 @@ public partial class Day7 : AdventOfCodeDay
             {
                 wires.Add(new Wire(parts[4], new And(parts[0], parts[2])));
             }
-            else if(parts.Any(_ => _ == "OR"))
+            else if (parts.Any(_ => _ == "OR"))
             {
                 wires.Add(new Wire(parts[4], new Or(parts[0], parts[2])));
             }
-            else if(parts.Any(_ => _ == "NOT"))
+            else if (parts.Any(_ => _ == "NOT"))
             {
                 wires.Add(new Wire(parts[3], new Not(parts[1])));
             }
-            else if(parts.Any(_ => _ == "LSHIFT"))
+            else if (parts.Any(_ => _ == "LSHIFT"))
             {
                 wires.Add(new Wire(parts[4], new LShift(parts[0], int.Parse(parts[2]))));
             }
-            else if(parts.Any(_ => _ == "RSHIFT"))
+            else if (parts.Any(_ => _ == "RSHIFT"))
             {
                 wires.Add(new Wire(parts[4], new RShift(parts[0], int.Parse(parts[2]))));
             }
             else
             {
-                if (ushort.TryParse(parts[0], out ushort value))
-                {
-                    wires.Add(new Wire(parts[2], new ValueForward(value)));
-                }
-                else
-                {
-                    wires.Add(new Wire(parts[2], new WireForward(parts[0])));
-                }
+                wires.Add(new Wire(parts[2], new Forward(parts[0])));
             }
         }
 
         Dictionary<string, ushort> wireValues = [];
-        foreach(Wire wire in wires)
+        foreach (Wire wire in wires)
         {
             wireValues.Add(wire.Name, wire.Input.Execute(wires));
         }
@@ -60,7 +53,54 @@ public partial class Day7 : AdventOfCodeDay
 
     protected override string SolvePart2(string[] input)
     {
-        return "";
+        List<Wire> wires = [];
+
+        foreach (string line in input)
+        {
+            string[] parts = line.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+
+            if (parts.Any(_ => _ == "AND"))
+            {
+                wires.Add(new Wire(parts[4], new And(parts[0], parts[2])));
+            }
+            else if (parts.Any(_ => _ == "OR"))
+            {
+                wires.Add(new Wire(parts[4], new Or(parts[0], parts[2])));
+            }
+            else if (parts.Any(_ => _ == "NOT"))
+            {
+                wires.Add(new Wire(parts[3], new Not(parts[1])));
+            }
+            else if (parts.Any(_ => _ == "LSHIFT"))
+            {
+                wires.Add(new Wire(parts[4], new LShift(parts[0], int.Parse(parts[2]))));
+            }
+            else if (parts.Any(_ => _ == "RSHIFT"))
+            {
+                wires.Add(new Wire(parts[4], new RShift(parts[0], int.Parse(parts[2]))));
+            }
+            else
+            {
+                wires.Add(new Wire(parts[2], new Forward(parts[0])));
+            }
+        }
+
+        Dictionary<string, ushort> wireValues = [];
+        foreach (Wire wire in wires)
+        {
+            wireValues.Add(wire.Name, wire.Input.Execute(wires));
+        }
+
+        ushort aValue = wireValues["a"];
+        wireValues.Clear();
+        wires.ForEach(_ => _.Input.Cache = null);
+        (wires.First(_ => _.Name == "b").Input as Forward)!.InputName = aValue.ToString();
+        foreach (Wire wire in wires)
+        {
+            wireValues.Add(wire.Name, wire.Input.Execute(wires));
+        }
+
+        return wireValues["a"].ToString();
     }
 
     private class Wire
@@ -77,6 +117,7 @@ public partial class Day7 : AdventOfCodeDay
 
     private interface IOperation
     {
+        public ushort? Cache { get; set; }
         public ushort Execute(ICollection<Wire> wires);
     }
 
@@ -84,6 +125,7 @@ public partial class Day7 : AdventOfCodeDay
     {
         public string InputAName { get; set; }
         public string InputBName { get; set; }
+        public ushort? Cache { get; set; }
 
         public BinaryOperation(string inputAName, string inputBName)
         {
@@ -97,6 +139,7 @@ public partial class Day7 : AdventOfCodeDay
     private abstract class UnaryOperation : IOperation
     {
         public string InputName { get; set; }
+        public ushort? Cache { get; set; }
 
         public UnaryOperation(string inputName)
         {
@@ -106,109 +149,149 @@ public partial class Day7 : AdventOfCodeDay
         public abstract ushort Execute(ICollection<Wire> wires);
     }
 
-    private class ValueForward(ushort value) : IOperation
+    private class Forward(string inputName) : UnaryOperation(inputName)
     {
-        public ushort Execute(ICollection<Wire> wires)
-        {
-            return value;
-        }
-    }
-
-    private class WireForward(string inputName) : UnaryOperation(inputName)
-    {
-        private ushort? _cache;
-
         public override ushort Execute(ICollection<Wire> wires)
         {
-            if (_cache.HasValue)
+            if (Cache.HasValue)
             {
-                return _cache.Value;
+                return Cache.Value;
             }
 
-            _cache = wires.First(_ => _.Name == InputName).Input.Execute(wires);
-            return _cache.Value;
+            if (ushort.TryParse(InputName, out ushort value))
+            {
+                Cache = value;
+                return Cache.Value;
+            }
+
+            Cache = wires.First(_ => _.Name == InputName).Input.Execute(wires);
+            return Cache.Value;
         }
     }
 
     private class Not(string inputName) : UnaryOperation(inputName)
     {
-        private ushort? _cache;
-
         public override ushort Execute(ICollection<Wire> wires)
         {
-            if (_cache.HasValue)
+            if (Cache.HasValue)
             {
-                return _cache.Value;
+                return Cache.Value;
             }
 
-            _cache = (ushort)~wires.First(_ => _.Name == InputName).Input.Execute(wires);
-            return _cache.Value;
+            if (ushort.TryParse(InputName, out ushort value))
+            {
+                Cache = (ushort)~value;
+                return Cache.Value;
+            }
+
+            Cache = (ushort)~wires.First(_ => _.Name == InputName).Input.Execute(wires);
+            return Cache.Value;
         }
     }
 
     private class And(string inputAName, string inputBName) : BinaryOperation(inputAName, inputBName)
     {
-        private ushort? _cache;
-
         public override ushort Execute(ICollection<Wire> wires)
         {
-            if (_cache.HasValue)
+            if (Cache.HasValue)
             {
-                return _cache.Value;
+                return Cache.Value;
             }
 
-            _cache = (ushort)(wires.First(_ => _.Name == inputAName).Input.Execute(wires) 
+            if (ushort.TryParse(inputAName, out ushort valueA))
+            {
+                if (ushort.TryParse(inputBName, out ushort valueB))
+                {
+                    Cache = (ushort)(valueA & valueB);
+                }
+                else
+                {
+                    Cache = (ushort)(valueA & wires.First(_ => _.Name == inputBName).Input.Execute(wires));
+                }
+                return Cache.Value;
+            }
+            else if (ushort.TryParse(inputBName, out ushort valueB))
+            {
+                Cache = (ushort)(wires.First(_ => _.Name == inputAName).Input.Execute(wires) & valueB);
+                return Cache.Value;
+            }
+
+            Cache = (ushort)(wires.First(_ => _.Name == inputAName).Input.Execute(wires)
                 & wires.First(_ => _.Name == inputBName).Input.Execute(wires));
-            return _cache.Value;
+            return Cache.Value;
         }
     }
 
     private class Or(string inputAName, string inputBName) : BinaryOperation(inputAName, inputBName)
     {
-        private ushort? _cache;
-
         public override ushort Execute(ICollection<Wire> wires)
         {
-            if (_cache.HasValue)
+            if (Cache.HasValue)
             {
-                return _cache.Value;
+                return Cache.Value;
             }
 
-            _cache = (ushort)(wires.First(_ => _.Name == inputAName).Input.Execute(wires)
+            if (ushort.TryParse(inputAName, out ushort valueA))
+            {
+                if (ushort.TryParse(inputBName, out ushort valueB))
+                {
+                    Cache = (ushort)(valueA | valueB);
+                }
+                else
+                {
+                    Cache = (ushort)(valueA | wires.First(_ => _.Name == inputBName).Input.Execute(wires));
+                }
+                return Cache.Value;
+            }
+            else if (ushort.TryParse(inputBName, out ushort valueB))
+            {
+                Cache = (ushort)(wires.First(_ => _.Name == inputAName).Input.Execute(wires) | valueB);
+                return Cache.Value;
+            }
+
+            Cache = (ushort)(wires.First(_ => _.Name == inputAName).Input.Execute(wires)
                 | wires.First(_ => _.Name == inputBName).Input.Execute(wires));
-            return _cache.Value;
+            return Cache.Value;
         }
     }
 
     private class LShift(string inputName, int shiftAmount) : UnaryOperation(inputName)
     {
-        private ushort? _cache;
-
         public override ushort Execute(ICollection<Wire> wires)
         {
-            if (_cache.HasValue)
+            if (Cache.HasValue)
             {
-                return _cache.Value;
+                return Cache.Value;
             }
 
-            _cache = (ushort)(wires.First(_ => _.Name == inputName).Input.Execute(wires) << shiftAmount);
-            return _cache.Value;
+            if (ushort.TryParse(inputName, out ushort value))
+            {
+                Cache = (ushort)(value << shiftAmount);
+                return Cache.Value;
+            }
+
+            Cache = (ushort)(wires.First(_ => _.Name == inputName).Input.Execute(wires) << shiftAmount);
+            return Cache.Value;
         }
     }
 
     private class RShift(string inputName, int shiftAmount) : UnaryOperation(inputName)
     {
-        private ushort? _cache;
-
         public override ushort Execute(ICollection<Wire> wires)
         {
-            if (_cache.HasValue)
+            if (Cache.HasValue)
             {
-                return _cache.Value;
+                return Cache.Value;
             }
 
-            _cache = (ushort)(wires.First(_ => _.Name == inputName).Input.Execute(wires) >> shiftAmount);
-            return _cache.Value;
+            if (ushort.TryParse(inputName, out ushort value))
+            {
+                Cache = (ushort)(value >> shiftAmount);
+                return Cache.Value;
+            }
+
+            Cache = (ushort)(wires.First(_ => _.Name == inputName).Input.Execute(wires) >> shiftAmount);
+            return Cache.Value;
         }
     }
 }
