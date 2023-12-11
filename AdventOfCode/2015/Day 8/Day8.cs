@@ -28,7 +28,21 @@ public partial class Day8 : AdventOfCodeDay
 
     protected override string SolvePart2(string[] input)
     {
-        return "";
+        int total = 0;
+        foreach (string line in input)
+        {
+            string copy = line;
+            copy = copy.Replace("\\\\", "\\\\\\\\");    // \\ -> \\\\
+            copy = copy.Replace("\\\"", "\\\\\"");      // \" -> \\\"
+            copy = copy.Replace("\"", "\\\"");          // " -> \"
+            copy = $"\"{copy}\"";
+            foreach (Match match in asciiRegex().Matches(copy))
+            {
+                copy = copy.Replace(match.Value, "\\xxx");
+            }
+            total += copy.Length - line.Length;
+        }
+        return total.ToString();
     }
 
     [GeneratedRegex(@"\\x[0-f]{2}")]
