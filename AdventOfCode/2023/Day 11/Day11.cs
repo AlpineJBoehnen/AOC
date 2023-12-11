@@ -88,15 +88,21 @@ public class Day11 : AdventOfCodeDay
                     }
                 }
 
-                temp += line[x];
-                if (!hasGalaxy)
+                if (hasGalaxy)
+                {
+                    temp += line[x];
+                }
+                else
                 {
                     temp += 'x';
                 }
             }
 
-            expansionList.Add(temp);
-            if (!temp.Contains('#'))
+            if(temp.Contains('#'))
+            {
+                expansionList.Add(temp);
+            }
+            else
             {
                 expansionList.Add(new string('x', temp.Length));
             }
@@ -136,7 +142,7 @@ public class Day11 : AdventOfCodeDay
                 }
 
                 int expansion = 1_000_000;
-                ulong add = (ulong)(Math.Abs(a.x - b.x) + Math.Abs(a.y - b.y) + (horizontalExpansions * (expansion - 2)) + (verticalExpansions * (expansion - 2)));
+                ulong add = (ulong)(Math.Abs(a.x - b.x) + Math.Abs(a.y - b.y) + (horizontalExpansions * (expansion - 1)) + (verticalExpansions * (expansion - 1)));
                 total += add;
             }
         }
