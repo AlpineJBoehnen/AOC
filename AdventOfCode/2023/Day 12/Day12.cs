@@ -1,5 +1,7 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
+using System.Runtime.Intrinsics.Arm;
 
 namespace AdventOfCode.Y2023;
 
@@ -36,9 +38,23 @@ public class Day12 : AdventOfCodeDay
         return total.ToString();
     }
 
+    // 23560973677 too low
+
     protected override string SolvePart2(string[] input)
     {
-        return "";
+        ulong total = 0;
+        foreach (string line in input)
+        {
+            var parts = line.Split(' ');
+            string lne = string.Join('?', parts[0], parts[0], parts[0], parts[0], parts[0]);
+            string dmgGrps = string.Join(',', parts[1], parts[1], parts[1], parts[1], parts[1]);
+            ulong inc = CountArrangementsDp(lne.ToCharArray(), dmgGrps.Split(',').Select(_ => int.Parse(_)).ToArray(), 0, 0, 0);
+            Debug.WriteLine($"{line} - {inc}");
+            total += inc;
+            _dp.Clear();
+        }
+
+        return total.ToString();
     }
 
     private static int CountArrangements(string line, int[] damagedGroups)
@@ -48,7 +64,7 @@ public class Day12 : AdventOfCodeDay
         foreach (string arrangement in combos)
         {
             int[] groups = arrangement.Split('.', StringSplitOptions.RemoveEmptyEntries).Select(_ => _.Length).ToArray();
-            if(groups.Length == damagedGroups.Length)
+            if (groups.Length == damagedGroups.Length)
             {
                 bool valid = true;
                 for (int i = 0; i < groups.Length; i++)
@@ -93,5 +109,52 @@ public class Day12 : AdventOfCodeDay
         }
 
         return combinations.ToArray();
+    }
+
+    private static Dictionary<(int, int, int), ulong> _dp = [];
+
+    private static ulong CountArrangementsDp(char[] line, int[] damagedGroups, int lineIndex, int groupIndex, int groupLength)
+    {
+        if (_dp.TryGetValue((lineIndex, groupIndex, groupLength), out ulong cached))
+        {
+            return cached;
+        }
+
+        if(lineIndex == line.Length)
+        {
+            if (groupIndex == damagedGroups.Length && groupLength == 0)
+            {
+                return 1;
+            }
+            else if(groupIndex == damagedGroups.Length - 1 && damagedGroups[groupIndex] == groupLength)
+            {
+                return 1;
+            }
+            else
+            {
+                return 0;
+            }
+        }
+
+        ulong total = 0;
+
+        if (line[lineIndex] == '.' || line[lineIndex] == '?')
+        {
+            if(groupLength == 0)
+            {
+                total += CountArrangementsDp(line, damagedGroups, lineIndex + 1, groupIndex, 0);
+            }
+            else if (groupLength>0 && groupIndex < damagedGroups.Length && damagedGroups[groupIndex] == groupLength)
+            {
+                total += CountArrangementsDp(line, damagedGroups, lineIndex + 1, groupIndex + 1, 0);
+            }
+        }
+
+        if (line[lineIndex] == '#' || line[lineIndex] == '?')
+        {
+            total += CountArrangementsDp(line, damagedGroups, lineIndex + 1, groupIndex, groupLength + 1);
+        }
+
+        return _dp[(lineIndex, groupIndex, groupLength)] = total;
     }
 }
