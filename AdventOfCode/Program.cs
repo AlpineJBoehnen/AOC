@@ -11,6 +11,6 @@ internal class Program
         // Select Day
         AdventOfCodeDay day = new Day14();
 
-        day.Run(true);
+        day.Run(false);
     }
 }

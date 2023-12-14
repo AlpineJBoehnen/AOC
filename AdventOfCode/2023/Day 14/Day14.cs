@@ -14,41 +14,37 @@ public class Day14 : AdventOfCodeDay
     protected override string SolvePart1(string[] input)
     {
         //List<string> iters = [];
-
+        Dictionary<int, List<int>> scores = [];
         char[][] last = input.Select(_ => _.ToCharArray()).ToArray();
-        for (int i = 0; i < 1000; i++)
+        for (int i = 0; i < 500; i++)
         {
-            Console.WriteLine(i);
-            char[][] map = ShiftEast(ShiftSouth(ShiftWest(ShiftNorth(last))));
+            ShiftEast(ShiftSouth(ShiftWest(ShiftNorth(last))));
 
-            Console.Write($"Map {i}:\n{string.Join('\n', map.Select(_ => new string(_)))}");
-            if (string.Join(' ', map.Select(_ => new string(_))) == string.Join(' ', last.Select(_ => new string(_))))
+            int score = 0;
+            for (int yy = 0; yy < last.Length; yy++)
             {
-                Console.WriteLine("match!");
-                break;
+                for (int xx = 0; xx < last[0].Length; xx++)
+                {
+                    if (last[yy][xx] == 'O')
+                    {
+                        score += last.Length - yy;
+                    }
+                }
             }
-            last = map;
+
+            if(!scores.ContainsKey(score))
+            {
+                scores[score] = new List<int>();
+            }
+            else
+            {
+                scores[score].Add(i);
+            }
+
+            Console.WriteLine($"{i}: {score} [{string.Join(", ", scores[score])}]");
         }
-        //string[] map = ShiftNorth(input.Select(_ => _.ToCharArray()).ToArray());
 
-        //foreach (var line in map)
-        //{
-        //    Console.WriteLine(line);
-        //}
-
-        int total = 0;
-        //for (int yy = 0; yy < map.Length; yy++)
-        //{
-        //    for (int xx = 0; xx < map[0].Length; xx++)
-        //    {
-        //        if (map[yy][xx] == 'O')
-        //        {
-        //            total += map.Length - yy;
-        //        }
-        //    }
-        //}
-
-        return total.ToString();
+        return "";
     }
 
     public char[][] ShiftNorth(char[][] map)
