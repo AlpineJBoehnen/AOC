@@ -9,7 +9,7 @@ internal class Program
     private static void Main(string[] args)
     {
         // Select Day
-        AdventOfCodeDay day = new Day17();
+        AdventOfCodeDay day = new Day18();
 
         day.Run(true);
     }
