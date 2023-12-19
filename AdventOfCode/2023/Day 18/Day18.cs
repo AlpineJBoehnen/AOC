@@ -91,55 +91,31 @@ public class Day18 : AdventOfCodeDay
 
     protected override string SolvePart2(string[] input)
     {
-        //19838269529535
-        //19838269529535
         int n = 1;
         (long X, long Y) current = (0,0);
 
         List<long> X = [0];
         List<long> Y = [0];
-        //List<long> X = [0,4,4,0];
-        //List<long> Y = [0,0,4,4];
-        //List<long> X = [0,5,5,0];
-        //List<long> Y = [0,0,5,5];
-        //n = 4;
+        long extra = 0;
         foreach (string line in input)
         {
-            //var parts = line.Split(' ');
-            //int count = Convert.ToInt32(parts[2][2..7], 16);
-            //switch (parts[2][7])
-            //{
-            //    case '0': // up
-            //        current.Y -= count;
-            //        break;
-            //    case '1': // down
-            //        current.Y += count;
-            //        break;
-            //    case '2': // left
-            //        current.X -= count;
-            //        break;
-            //    case '3': // right
-            //        current.X += count;
-            //        break;
-            //    default:
-            //        throw new Exception("Unknown direction");
-            //};
-
             var parts = line.Split(' ');
-            int count = int.Parse(parts[1]);
-            switch (parts[0][0])
+            int count = Convert.ToInt32(parts[2][2..7], 16);
+            switch (parts[2][7])
             {
-                case 'U': // up
+                case '3': // up
                     current.Y -= count;
                     break;
-                case 'D': // down
+                case '1': // down
                     current.Y += count;
+                    extra += count;
                     break;
-                case 'L': // left
+                case '2': // left
                     current.X -= count;
                     break;
-                case 'R': // right
+                case '0': // right
                     current.X += count;
+                    extra += count;
                     break;
                 default:
                     throw new Exception("Unknown direction");
@@ -150,7 +126,7 @@ public class Day18 : AdventOfCodeDay
             n++;
         }
 
-        return ShoelaceArea(X.ToArray(), Y.ToArray(), n).ToString();
+        return (ShoelaceArea(X.ToArray(), Y.ToArray(), n) + extra + 1).ToString();
     }
 
     private struct PaintedCell
